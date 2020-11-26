@@ -11,10 +11,10 @@ public class ProteomeConsensus extends JFrame implements ActionListener {
     static JButton browse_button1, browse_button2, analyse_button;
     static JTextField name_file1, name_file2;
     static JPanel visualisation;
-    static JLabel file_name1, file_name2, files;
-    static JTextArea text_area;
+    static JLabel file_name1, file_name2, entered_files;
+    static JTextArea comparison_files;
     static BufferedReader file1, file2;
-    private JFileChooser fileChooser;
+    private JFileChooser select_file;
 
     public static void main(String[] args) {
         ProteomeConsensus frame = new ProteomeConsensus();
@@ -26,13 +26,16 @@ public class ProteomeConsensus extends JFrame implements ActionListener {
         frame.setVisible(true);
     }
 
+    /**
+     * Create a GUI
+     */
     public void GUI() {
         Container window = getContentPane();
 
-        files = new JLabel();
-        files.setBounds(20, 20, 100, 20);
-        files.setText("Enter two files:");
-        window.add(files);
+        entered_files = new JLabel();
+        entered_files.setBounds(20, 20, 100, 20);
+        entered_files.setText("Enter two files:");
+        window.add(entered_files);
 
         file_name1 = new JLabel();
         file_name1.setBounds(20, 60, 60, 20);
@@ -75,12 +78,20 @@ public class ProteomeConsensus extends JFrame implements ActionListener {
         visualisation.setBackground(Color.WHITE);
         window.add(visualisation);
 
-        text_area = new JTextArea();
-        text_area.setBounds(20, 480, 700, 200);
-        window.add(text_area);
+        comparison_files = new JTextArea();
+        comparison_files.setBounds(20, 480, 700, 200);
+        window.add(comparison_files);
     }
 
-    public void readFile() throws FileNotFoundException {
+    /**
+     * Read two files,
+     * compare the two files,
+     * the text area should display the amount of lines found in each file,
+     * the amount of unique lines in each file,
+     * and the amount of lines which can be found in both files.
+     * These numbers should then be passed on to a draw function. 
+     */
+    public void readFiles() throws FileNotFoundException {
         ArrayList<String> lines1 = new ArrayList<String>();
         ArrayList<String> lines2 = new ArrayList<String>();
 
@@ -122,7 +133,7 @@ public class ProteomeConsensus extends JFrame implements ActionListener {
                 }
                 file1.close();
                 file2.close();
-                text_area.setText("Total number of lines in file one is: " + total_file1 + "\n" +
+                comparison_files.setText("Total number of lines in file one is: " + total_file1 + "\n" +
                         "Total number of lines in file two is: " + total_file2);
                 //String element0 = lines1.get(0);
 //        } catch (IOException e) {
@@ -172,24 +183,24 @@ public class ProteomeConsensus extends JFrame implements ActionListener {
         int reply;
 
         if (e.getSource() == browse_button1) {
-            fileChooser = new JFileChooser();
-            reply = fileChooser.showOpenDialog(this);
+            select_file = new JFileChooser();
+            reply = select_file.showOpenDialog(this);
             if (reply == JFileChooser.APPROVE_OPTION) {
-                selectedFile = fileChooser.getSelectedFile();
+                selectedFile = select_file.getSelectedFile();
                 name_file1.setText(selectedFile.getAbsolutePath());
             }
         }
         if (e.getSource() == browse_button2) {
-            fileChooser = new JFileChooser();
-            reply = fileChooser.showOpenDialog(this);
+            select_file = new JFileChooser();
+            reply = select_file.showOpenDialog(this);
             if (reply == JFileChooser.APPROVE_OPTION) {
-                selectedFile = fileChooser.getSelectedFile();
+                selectedFile = select_file.getSelectedFile();
                 name_file2.setText(selectedFile.getAbsolutePath());
             }
         }
         if (e.getSource() == analyse_button) {
             try {
-                readFile();
+                readFiles();
             } catch (FileNotFoundException fileNotFoundException) {
                 fileNotFoundException.printStackTrace();
             }
