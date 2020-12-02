@@ -5,7 +5,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
-import java.util.ArrayList;
+import java.util.stream.Stream;
 
 public class ProteomeConsensus extends JFrame implements ActionListener {
     static JButton browse_button1, browse_button2, analyse_button;
@@ -27,7 +27,8 @@ public class ProteomeConsensus extends JFrame implements ActionListener {
     }
 
     /**
-     * Create a GUI
+     * Create a GUI,
+     * entered_files shows a label with entered files:
      */
     public void GUI() {
         Container window = getContentPane();
@@ -89,63 +90,75 @@ public class ProteomeConsensus extends JFrame implements ActionListener {
      * the text area should display the amount of lines found in each file,
      * the amount of unique lines in each file,
      * and the amount of lines which can be found in both files.
-     * These numbers should then be passed on to a draw function. 
+     * These numbers should then be passed on to a draw function.
      */
     public void readFiles() throws FileNotFoundException {
-        ArrayList<String> lines1 = new ArrayList<String>();
-        ArrayList<String> lines2 = new ArrayList<String>();
 
-        int total_file1 = 0;
-        int total_file2 = 0;
-
-        int counter = 0;
-        int lineNum = 1;
-
-        String[] temp;
-
+//    }
+//        ArrayList<String> lines1 = new ArrayList<String>();
+//        ArrayList<String> lines2 = new ArrayList<String>();
+//
+//        int total_file1 = 0;
+//        int total_file2 = 0;
+//
+//        int counter = 0;
+//        int lineNum = 1;
+//
+//        //String[] temp;
+//
         try {
-            file1 = new BufferedReader(new FileReader(name_file1.getText()));
-            file2 = new BufferedReader(new FileReader(name_file2.getText()));
-            String line;
+            BufferedReader file1 = openFile(name_file1.getText());
+            BufferedReader file2 = openFile(name_file2.getText());
+//            file1 = new BufferedReader(new FileReader(name_file1.getText()));
+//            file2 = new BufferedReader(new FileReader(name_file2.getText()));
+            String line, code;
 
             while ((line = file1.readLine()) != null) {
+                System.out.println(line);
                 //text_area.append(line + "\n");
                 if (!line.contains("Protein")) {
-                    total_file1++;
+//                    total_file1++;
                     if (line.startsWith("AT")) {
-                        temp = line.split("\t");
-                        lines1.add(temp[0]);
+                        String[] temp = line.split("\t");
+                        code = temp[0];
+//                        lines1.add(code);
 //                    line.split("\t");
 //                    lines1.add(line);
 //                    if(line.startsWith("AT")| line.endsWith(".1")){
 //                    }
                     }
                 }
-                System.out.println(lines1);
-                while ((line = file2.readLine()) != null) {
-                    //text_area.append(line + "\n");
-                    if (!line.contains("Protein")) {
-                        total_file2++;
-                        line.split("\t");
-                        //String part1 = line[0];
-                        lines2.add(line);
-                    }
-                }
-                file1.close();
-                file2.close();
-                comparison_files.setText("Total number of lines in file one is: " + total_file1 + "\n" +
-                        "Total number of lines in file two is: " + total_file2);
-                //String element0 = lines1.get(0);
-//        } catch (IOException e) {
-//            JOptionPane.showMessageDialog(null,
-//                    "File Error: " + e.toString());
             }
-            //counter(lines1);
-            //return lines1;
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+//                System.out.println(lines1);
+//                //System.out.println(temp);
+//                while ((line = file2.readLine()) != null) {
+//                    //text_area.append(line + "\n");
+//                    if (!line.contains("Protein")) {
+//                        total_file2++;
+//                        line.split("\t");
+//                        //String part1 = line[0];
+//                        lines2.add(line);
+//                    }
+//                }
+//                file1.close();
+//                file2.close();
+//                comparison_files.setText("Total number of lines in file one is: " + total_file1 + "\n" +
+//                        "Total number of lines in file two is: " + total_file2);
+//                //String element0 = lines1.get(0);
+////        } catch (IOException e) {
+////            JOptionPane.showMessageDialog(null,
+////                    "File Error: " + e.toString());
+//            }
+//            //counter(lines1);
+//            //return lines1;
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
 //    public void counter(ArrayList<String> lines1){
 //        int count = 0;
@@ -175,7 +188,10 @@ public class ProteomeConsensus extends JFrame implements ActionListener {
 //        }
 //
 //    }
-
+    public BufferedReader openFile(String filename) throws FileNotFoundException {
+        BufferedReader fileContent = new BufferedReader(new FileReader(filename));
+        return fileContent;
+    }
 
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -208,3 +224,4 @@ public class ProteomeConsensus extends JFrame implements ActionListener {
 
     }
 }
+
