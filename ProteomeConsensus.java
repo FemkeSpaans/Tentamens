@@ -5,15 +5,16 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
-import java.util.stream.Stream;
+import java.util.ArrayList;
 
 public class ProteomeConsensus extends JFrame implements ActionListener {
     static JButton browse_button1, browse_button2, analyse_button;
     static JTextField name_file1, name_file2;
     static JPanel visualisation;
-    static JLabel file_name1, file_name2, entered_files;
+    static JLabel file_name1, file_name2, entered_files, unique_file1, unique_file2, overlapping,
+    unique_file1_number, unique_file2_number, overlapping_number;
     static JTextArea comparison_files;
-    static BufferedReader file1, file2;
+    //static BufferedReader file1, file2;
     private JFileChooser select_file;
 
     public static void main(String[] args) {
@@ -91,107 +92,111 @@ public class ProteomeConsensus extends JFrame implements ActionListener {
      * the amount of unique lines in each file,
      * and the amount of lines which can be found in both files.
      * These numbers should then be passed on to a draw function.
+     * @return
      */
-    public void readFiles() throws FileNotFoundException {
+    public ArrayList<Integer> readFiles() throws FileNotFoundException {
 
-//    }
-//        ArrayList<String> lines1 = new ArrayList<String>();
-//        ArrayList<String> lines2 = new ArrayList<String>();
-//
-//        int total_file1 = 0;
-//        int total_file2 = 0;
-//
-//        int counter = 0;
-//        int lineNum = 1;
-//
-//        //String[] temp;
-//
+        ArrayList<String> lines1 = new ArrayList<String>();
+        ArrayList<String> lines2 = new ArrayList<String>();
+        ArrayList<Integer> total_over_unique = new ArrayList<Integer>();
+
+        int total_lines_file1 = 0;
+        int total_lines_file2 = 0;
+        int overlapping = 0;
+
         try {
             BufferedReader file1 = openFile(name_file1.getText());
             BufferedReader file2 = openFile(name_file2.getText());
-//            file1 = new BufferedReader(new FileReader(name_file1.getText()));
-//            file2 = new BufferedReader(new FileReader(name_file2.getText()));
             String line, code;
 
             while ((line = file1.readLine()) != null) {
-                System.out.println(line);
-                //text_area.append(line + "\n");
                 if (!line.contains("Protein")) {
-//                    total_file1++;
+                    total_lines_file1++;
                     if (line.startsWith("AT")) {
                         String[] temp = line.split("\t");
                         code = temp[0];
-//                        lines1.add(code);
-//                    line.split("\t");
-//                    lines1.add(line);
-//                    if(line.startsWith("AT")| line.endsWith(".1")){
-//                    }
+                        lines1.add(code);
                     }
                 }
             }
-        } catch (IOException e) {
+            while ((line = file2.readLine()) != null) {
+                if (!line.contains("Protein")) {
+                    total_lines_file2++;
+                    if (line.startsWith("AT")) {
+                        String[] temp = line.split("\t");
+                        code = temp[0];
+                        lines2.add(code);
+                    }
+                    }
+                }
+            file1.close();
+            file2.close();
+
+
+            for(int i = 0; i< lines1.size();i++ ){
+                for(int j = 0; j<lines2.size();j++){
+                    if(lines1.get(i).equals(lines2.get(j))){
+                        overlapping++;
+                    }
+                }
+            }
+            int unique_lines_file1 = total_lines_file1 - overlapping;
+            int unique_lines_file2 = total_lines_file2 - overlapping;
+
+            total_over_unique.add(total_lines_file1);
+            total_over_unique.add(total_lines_file2);
+            total_over_unique.add(overlapping);
+            total_over_unique.add(unique_lines_file1);
+            total_over_unique.add(unique_lines_file2);
+
+            comparison_files.setText("Total number of lines in file one is: " + total_lines_file1 + "\n" +
+                    "Total number of lines in file two is: " + total_lines_file2 + "\n" +
+                    "Unique number of lines in file one is: "+ unique_lines_file1 + "\n" +
+                    "Unique number of lines in file one is: " + unique_lines_file2 + "\n" +
+                    "The number of overlapping lines in the files is: "+ overlapping);
+
+            } catch (IOException e) {
             e.printStackTrace();
         }
+        draw(total_over_unique);
+        return total_over_unique;
     }
-//                System.out.println(lines1);
-//                //System.out.println(temp);
-//                while ((line = file2.readLine()) != null) {
-//                    //text_area.append(line + "\n");
-//                    if (!line.contains("Protein")) {
-//                        total_file2++;
-//                        line.split("\t");
-//                        //String part1 = line[0];
-//                        lines2.add(line);
-//                    }
-//                }
-//                file1.close();
-//                file2.close();
-//                comparison_files.setText("Total number of lines in file one is: " + total_file1 + "\n" +
-//                        "Total number of lines in file two is: " + total_file2);
-//                //String element0 = lines1.get(0);
-////        } catch (IOException e) {
-////            JOptionPane.showMessageDialog(null,
-////                    "File Error: " + e.toString());
-//            }
-//            //counter(lines1);
-//            //return lines1;
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
 
-//    public void counter(ArrayList<String> lines1){
-//        int count = 0;
-//        if (text_area.getText().matches("(AT4G30530.1)")){
-//            count++;
-//        }
-//        if (text_area.getText().matches("(AT3G46970.1)")){
-//            count++;
-//        }
-//        if (text_area.getText().matches("(AT1G67090.1)")){
-//            count++;
-//        }
-//        if (text_area.getText().matches("(AT5G51830.1)")){
-//            count++;
-//        }
-//        if (text_area.getText().matches("(AT5G30510.1)")){
-//            count++;
-//        }
-//        if (text_area.getText().matches("(AT2G33845.1)")){
-//            count++;
-//        }
-//        if (text_area.getText().matches("(AT1G08200.1)")){
-//            count++;
-//        }
-//        if (text_area.getText().matches("(AT3G04720.1)")){
-//            count++;
-//        }
-//
-//    }
+
     public BufferedReader openFile(String filename) throws FileNotFoundException {
         BufferedReader fileContent = new BufferedReader(new FileReader(filename));
         return fileContent;
     }
+
+    public void draw(ArrayList<Integer> total_over_unique){
+        //unique_file1, unique_file2, overlapping,
+        //    unique_file1_number, unique_file2_number, overlapping_number
+        System.out.println(total_over_unique);
+        Container window = getContentPane();
+        Graphics graphics = visualisation.getGraphics();
+        //graphics.clearRect(20, 140, 700, 300);
+
+        graphics.setColor(Color.RED);
+        graphics.drawOval(200, 50, 200, 150);
+
+        graphics.setColor(Color.BLUE);
+        graphics.drawOval(300, 50, 200, 150);
+
+        graphics.setColor(Color.RED);
+        graphics.drawString("# unique from file 1", 80,60);
+        graphics.drawString(String.valueOf(total_over_unique.get(0)), 200, 120);
+
+        graphics.setColor(Color.BLUE);
+        graphics.drawString("# unique from file 2", 560, 60);
+        graphics.drawString(String.valueOf(total_over_unique.get(1)), 260, 120);
+
+        graphics.setColor(Color.BLACK);
+        graphics.drawString("# overlapping in both files", 260, 260);
+        graphics.drawString(String.valueOf(total_over_unique.get(2)), 300, 120);
+
+
+
+        }
 
     @Override
     public void actionPerformed(ActionEvent e) {
