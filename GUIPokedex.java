@@ -110,57 +110,96 @@ public class GUIPokedex extends JFrame implements ActionListener {
      * every line needs to be split on the ;
      * then you wanna cry cause your code doesnt work
      */
-    public void readFile() {
-        ArrayList<String> id = new ArrayList<>(); // arraylist for the id's of the pokemon
-//        ArrayList<String> name = new ArrayList<>(); // arraylist for the names of the pokemon
-//        ArrayList<Integer> species_id = new ArrayList<>(); // arraylist for the species id's
-//        ArrayList<Integer> height = new ArrayList<>(); // arraylist for the height of the pokemon
-//        ArrayList<Integer> weight = new ArrayList<>(); // arraylist for the weight of the pokemon
-//        ArrayList<Integer> base_xp = new ArrayList<>(); // arraylist for the base xp of the pokemon
-//        ArrayList<Integer> order = new ArrayList<>(); // arraylist for the order of the pokemon??
+    public void readFile() throws IOException {
+        ArrayList<String> list = new ArrayList<String>();
+        String str = null;
 
         try {
-            inFile = new BufferedReader(new FileReader(name_pokemon.getText()));
+            inFile = new BufferedReader(new FileReader(name_file.getText()));
             String line;
             while ((line = inFile.readLine()) != null) {
                 if (!line.contains("ID")) {
-                }else if (!line.startsWith("ID")){
-                    String[] temp = line.split("[;]"); // getting rid of the square bracket also doesn't work
-                    String code = temp[0];
-                    id.add(code); // why does this not work???
-                    // you wanna put every element in the right arraylist
-                    //id.add(line.substring(0));
-
+                    list.add(str);
+                    String[] stringArr = list.toArray(new String[0]);
                 }
             }
-            inFile.close();
         }
         catch (IOException e) {
-            JOptionPane.showMessageDialog(null,
-                    "File Error: " + e.toString());
+            e.printStackTrace();
         }
-        System.out.println(id);
     }
+////        ArrayList<String> id = new ArrayList<>(); // arraylist for the id's of the pokemon
+////        ArrayList<String> name = new ArrayList<>(); // arraylist for the names of the pokemon
+////        ArrayList<Integer> species_id = new ArrayList<>(); // arraylist for the species id's
+////        ArrayList<Integer> height = new ArrayList<>(); // arraylist for the height of the pokemon
+////        ArrayList<Integer> weight = new ArrayList<>(); // arraylist for the weight of the pokemon
+////        ArrayList<Integer> base_xp = new ArrayList<>(); // arraylist for the base xp of the pokemon
+////        ArrayList<Integer> order = new ArrayList<>(); // arraylist for the order of the pokemon??
+//
+//        try {
+//            inFile = new BufferedReader(new FileReader(name_file.getText()));
+//            String line;
+//            while ((line = inFile.readLine()) != null) {
+//                if (!line.contains("ID")) {
+//                    String[] temp = line.split(";");
+//                    String code = temp[0];
+//                    id.add(code);
+////                } else {
+////                    String[] temp = line.split(";");
+////                    System.out.println(temp);
+////                    String code = temp[0];
+////                    System.out.println(code);
+////                    id.add(code);
+//                }
+////                }else if (!line.startsWith("ID")){
+////                    String[] temp = line.split(";");// getting rid of the square bracket also doesn't work
+////                    System.out.println(temp);
+////                    String code = temp[0];
+////                    System.out.println(code);
+////                    id.add(code); // why does this not work???
+////                    // you wanna put every element in the right arraylist
+////                    //id.add(line.substring(0));
+//
+//            }
+//            System.out.println(id);
+//        } catch (FileNotFoundException fileNotFoundException) {
+//            fileNotFoundException.printStackTrace();
+//        } catch (IOException ioException) {
+//            ioException.printStackTrace();
+//        }
+//    }
+//        inFile.close();
+//        }
+//        catch (IOException e) {
+//            JOptionPane.showMessageDialog(null,
+//                    "File Error: " + e.toString());
+//        }
+//        System.out.println(id);
+//    }
 
-    @Override
-    public void actionPerformed(ActionEvent event) {
-        File selectedFile;
-        int reply;
+            @Override
+            public void actionPerformed (ActionEvent event){
+                File selectedFile;
+                int reply;
 
-        if (event.getSource() == browse_button) {
-            fileChooser = new JFileChooser();
-            reply = fileChooser.showOpenDialog(this);
-            if (reply == JFileChooser.APPROVE_OPTION) {
-                selectedFile = fileChooser.getSelectedFile();
-                name_file.setText(selectedFile.getAbsolutePath());
+                if (event.getSource() == browse_button) {
+                    fileChooser = new JFileChooser();
+                    reply = fileChooser.showOpenDialog(this);
+                    if (reply == JFileChooser.APPROVE_OPTION) {
+                        selectedFile = fileChooser.getSelectedFile();
+                        name_file.setText(selectedFile.getAbsolutePath());
+                    }
+                }
+                if (event.getSource() == open_button) {
+                    try {
+                        readFile();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                if (event.getSource() == choice_button) {
+                    System.out.println("choice");
+                    // enter a the name of a pokemon and find that pokemon using the name
+                }
             }
         }
-        if (event.getSource() == open_button) {
-            readFile();
-        }
-        if (event.getSource() == choice_button) {
-            System.out.println("choice");
-            // enter a the name of a pokemon and find that pokemon using the name
-        }
-    }
-}
