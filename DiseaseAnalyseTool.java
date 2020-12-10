@@ -6,6 +6,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
 
+/**
+ * @author Femke Spaans
+ * Disease Analyse Tool
+ * a tool to open a file, search its contents and display certain aspects of the file.
+ */
 public class DiseaseAnalyseTool extends JFrame implements ActionListener {
 
     static JButton browse_button, analyse_button;
@@ -15,6 +20,10 @@ public class DiseaseAnalyseTool extends JFrame implements ActionListener {
     static JTextArea information;
     private JFileChooser select_file;
 
+    /**
+     * create a frame for the graphical user interface
+     * @param args
+     */
     public static void main(String[] args) {
         DiseaseAnalyseTool frame = new DiseaseAnalyseTool();
         frame.setTitle("Disease Analyse Tool");
@@ -25,6 +34,13 @@ public class DiseaseAnalyseTool extends JFrame implements ActionListener {
         frame.setVisible(true);
     }
 
+    /**
+     * create a graphical user interface.
+     * one text field for the name of the file, one for the word which is to be searched for.
+     * one button to browse files and select a file, one button to analyse the data of the file selected.
+     * a textarea to display several features about the search word and the file.
+     * a panel to display a visualisation of the percentage of the search word found in the file.
+     */
     public void gui(){
         Container window = getContentPane();
 
@@ -71,36 +87,89 @@ public class DiseaseAnalyseTool extends JFrame implements ActionListener {
 
     }
 
+    /**
+     * a method to open a file with
+     * @param filename
+     * @return
+     * @throws FileNotFoundException
+     */
     public BufferedReader openFile(String filename) throws FileNotFoundException {
         BufferedReader fileContent = new BufferedReader(new FileReader(filename));
         return fileContent;
     }
 
-    public void readFiles(){
+    /**
+     * a method to read a file with line for line.
+     * count the lines, and the number of times the search word is found,
+     * only the first occurrence of the word in a line is counted.
+     * a percentage is made of this number and then made into a float.
+     * show information about the file and the search word is shown in the text area of the file.
+     * @return
+     * @throws IOException
+     */
+    public float readFiles() throws IOException{
 
         String line;
         String searchWord = search_word.getText();
         int number_search_word = 0;
+        int number_of_lines = 0;
 
         try{
-            BufferedReader file1 = openFile(name_file.getText());
+            BufferedReader file = openFile(name_file.getText());
 
-
-            while ((line = file1.readLine()) != null){
-                if(line.contains(searchWord)){
-                    number_search_word++;
+            while ((line = file.readLine()) != null){
+                if (line.startsWith("C")){
+                    number_of_lines++;
+                    if(line.contains(searchWord)){
+                        number_search_word++;
+                    }
                 }
 
-                //information.setText(searchWord);
-
-                //information.setText(line);
-
             }
-            System.out.println(number_search_word);
+
+            float number_of_lines1 = number_of_lines;
+            float number_search_word1 = number_search_word;
+            float percentage_search_word = number_search_word1 / number_of_lines1 * 100;
+            information.append("The search word is: "+searchWord + "\n");
+            information.append("The total number of lines in this file is: "+ number_of_lines + "\n");
+            information.append("The number of lines the search word is found in is: "+ number_search_word + "\n");
+            information.append("The percentage this search word is found is: "+ percentage_search_word +"%");
+
+            draw(percentage_search_word);
+            return percentage_search_word;
+
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return 0;
+    }
 
+    /**
+     * makes an int out of the percentage float which was given.
+     * draw two separate rectangles, one of the percentage the search word is found in the file,
+     * and one of the remainder.
+     * the percentages of both are writing into the rectangles.
+     * @param percentage_search_word
+     */
+    public void draw(float percentage_search_word){
+
+        // round the percentage to whole numbers
+        int number_of_search_word = Math.round(percentage_search_word);
+        int rest = 100 - number_of_search_word;
+
+        Graphics percentage_visualisation = visualisation.getGraphics();
+
+        percentage_visualisation.setColor(Color.BLUE);
+        percentage_visualisation.drawRect(0,0,400, 50);
+        percentage_visualisation.fillRect(0,0, (400 * number_of_search_word/100), 50);
+
+        percentage_visualisation.setColor(Color.ORANGE);
+        percentage_visualisation.drawRect(0,60,400, 50);
+        percentage_visualisation.fillRect(0,60, (400 * rest/100), 50);
+
+        percentage_visualisation.setColor(Color.BLACK);
+        percentage_visualisation.drawString(String.valueOf(number_of_search_word+ "%"), 200, 25);
+        percentage_visualisation.drawString(String.valueOf(rest+ "%"), 200, 85);
     }
 
 
@@ -119,7 +188,11 @@ public class DiseaseAnalyseTool extends JFrame implements ActionListener {
             }
         }
         if (e.getSource() == analyse_button){
-            readFiles();
+            try {
+                readFiles();
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+            }
         }
 
     }
