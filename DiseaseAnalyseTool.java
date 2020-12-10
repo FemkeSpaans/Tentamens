@@ -29,42 +29,42 @@ public class DiseaseAnalyseTool extends JFrame implements ActionListener {
         Container window = getContentPane();
 
         // create a jlabel which says to enter a file
-        JLabel file_name_entered = new JLabel();
+        file_name_entered = new JLabel();
         file_name_entered.setBounds(20, 20, 100, 20);
         file_name_entered.setText("Enter a file:");
         window.add(file_name_entered);
 
         // create a jtextfield in which to enter a file
-        JTextField name_file = new JTextField();
+        name_file = new JTextField();
         name_file.setBounds(20, 60, 200, 20);
         window.add(name_file);
 
         // create a jbutton to browse files with
-        JButton browse_button = new JButton();
+        browse_button = new JButton();
         browse_button.setBounds(260, 60, 100, 20);
         browse_button.setText("Browse");
         window.add(browse_button);
         browse_button.addActionListener(this);
 
         // create textfield in which to add a word to search for
-        JTextField search_word = new JTextField();
+        search_word = new JTextField();
         search_word.setBounds(20, 100, 200, 20);
         window.add(search_word);
 
         // create a jbutton to analyse the chosen file with
-        JButton analyse_button = new JButton();
+        analyse_button = new JButton();
         analyse_button.setBounds(260, 100, 100, 20);
         analyse_button.setText("Analyse");
         window.add(analyse_button);
         analyse_button.addActionListener(this);
 
         // create textarea in which to display information about the selected file
-        JTextArea information = new JTextArea();
+        information = new JTextArea();
         information.setBounds(20, 140, 540, 200);
         window.add(information);
 
         // create jpanel in which to display the percentage of the word which was searched for
-        JPanel visualisation = new JPanel();
+        visualisation = new JPanel();
         visualisation.setBounds(20, 360, 540, 160);
         visualisation.setBackground(Color.WHITE);
         window.add(visualisation);
@@ -78,14 +78,25 @@ public class DiseaseAnalyseTool extends JFrame implements ActionListener {
 
     public void readFiles(){
 
+        String line;
+        String searchWord = search_word.getText();
+        int number_search_word = 0;
+
         try{
             BufferedReader file1 = openFile(name_file.getText());
-            String line;
+
 
             while ((line = file1.readLine()) != null){
-                information.setText(line);
+                if(line.contains(searchWord)){
+                    number_search_word++;
+                }
+
+                //information.setText(searchWord);
+
+                //information.setText(line);
 
             }
+            System.out.println(number_search_word);
         } catch (IOException e) {
             e.printStackTrace();
         }
